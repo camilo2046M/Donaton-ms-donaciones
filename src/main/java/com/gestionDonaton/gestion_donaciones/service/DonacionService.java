@@ -15,7 +15,6 @@ public class DonacionService {
     private DonacionRepository repository;
 
     public Donacion registrarDonacion(String tipo, Double monto, String nombre, String objeto, String rut, String certificado) {
-
         Donacion donacion = DonacionFactory.crearDonacion(tipo);
         donacion.setMonto(monto);
         donacion.setDonanteNombre(nombre);
@@ -25,7 +24,7 @@ public class DonacionService {
             ((DonacionEmpresarial) donacion).setRutEmpresa(rut);
             ((DonacionEmpresarial) donacion).setCertificadoImpuestos(certificado);
         }
-
+        donacion.setEstado("PENDIENTE");
         return repository.save(donacion);
     }
 
@@ -36,7 +35,6 @@ public class DonacionService {
             return true;
         }).orElse(false);
     }
-
 
     public List<Donacion> buscarPorPalabra(String palabra) {
         return repository.findByNombreObjetoContainingIgnoreCase(palabra);
