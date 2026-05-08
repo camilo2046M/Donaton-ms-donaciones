@@ -30,6 +30,12 @@ public class DonacionController {
         return new ResponseEntity<>(nuevaDonacion, HttpStatus.CREATED);
     }
 
+    @PatchMapping("/{id}/completar")
+    public ResponseEntity<String> marcarComoCompletada(@PathVariable Long id) {
+        System.out.println("Donación " + id + " marcada como COMPLETADA");
+        return ResponseEntity.ok("Estado de donación actualizado");
+    }
+
 
     @GetMapping("/buscar/{palabra}")
     public List<Donacion> buscarPorPalabra(@PathVariable String palabra) {
