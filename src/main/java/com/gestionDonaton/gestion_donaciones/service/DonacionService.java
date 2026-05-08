@@ -29,6 +29,14 @@ public class DonacionService {
         return repository.save(donacion);
     }
 
+    public boolean actualizarEstadoCompletado(Long id) {
+        return repository.findById(id).map(donacion -> {
+            donacion.setEstado("COMPLETADA");
+            repository.save(donacion);
+            return true;
+        }).orElse(false);
+    }
+
 
     public List<Donacion> buscarPorPalabra(String palabra) {
         return repository.findByNombreObjetoContainingIgnoreCase(palabra);
