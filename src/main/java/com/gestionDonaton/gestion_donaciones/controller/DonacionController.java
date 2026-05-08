@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
@@ -15,25 +16,32 @@ public class DonacionController {
     @Autowired
     private DonacionService service;
 
+
     @PostMapping("/crear")
     public ResponseEntity<Donacion> crearDonacion(
             @RequestParam String tipo,
             @RequestParam Double monto,
             @RequestParam String nombre,
+            @RequestParam String objeto,
             @RequestParam(required = false) String rut,
             @RequestParam(required = false) String certificado) {
 
-        Donacion nuevaDonacion = service.registrarDonacion(tipo, monto, nombre, rut, certificado);
+
+        Donacion nuevaDonacion = service.registrarDonacion(tipo, monto, nombre, objeto, rut, certificado);
+
         return new ResponseEntity<>(nuevaDonacion, HttpStatus.CREATED);
     }
 
+
     @GetMapping("/listar")
     public ResponseEntity<List<Donacion>> obtenerTodas() {
-        return ResponseEntity.ok(service.listarTodas());
+        List<Donacion> donaciones = service.listarTodas();
+        return ResponseEntity.ok(donaciones);
     }
 
+
     @GetMapping("/salud")
-    public String healthCheck() {
-        return "Servicio de Gestión de Donaciones operando en puerto 8081";
+    public String check() {
+        return "Microservicio de Donaciones Operativo - Puerto 8081";
     }
 }

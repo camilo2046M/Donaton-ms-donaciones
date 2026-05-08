@@ -14,4 +14,5 @@ public abstract class Donacion {
     private Long id;
     private Double monto;
     private String donanteNombre;
+    private String nombreObjeto;
 }
