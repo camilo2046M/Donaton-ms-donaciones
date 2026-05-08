@@ -21,13 +21,17 @@ public class DonacionService {
         donacion.setDonanteNombre(nombre);
         donacion.setNombreObjeto(objeto);
 
-
         if (donacion instanceof DonacionEmpresarial && rut != null) {
             ((DonacionEmpresarial) donacion).setRutEmpresa(rut);
             ((DonacionEmpresarial) donacion).setCertificadoImpuestos(certificado);
         }
 
         return repository.save(donacion);
+    }
+
+
+    public List<Donacion> buscarPorPalabra(String palabra) {
+        return repository.findByNombreObjetoContainingIgnoreCase(palabra);
     }
 
     public List<Donacion> listarTodas() {
