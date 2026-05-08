@@ -14,12 +14,12 @@ public class DonacionService {
     @Autowired
     private DonacionRepository repository;
 
-    public Donacion registrarDonacion(String tipo, Double monto, String nombre, String rut, String certificado) {
+    public Donacion registrarDonacion(String tipo, Double monto, String nombre, String objeto, String rut, String certificado) {
 
         Donacion donacion = DonacionFactory.crearDonacion(tipo);
-
         donacion.setMonto(monto);
         donacion.setDonanteNombre(nombre);
+        donacion.setNombreObjeto(objeto);
 
 
         if (donacion instanceof DonacionEmpresarial && rut != null) {
