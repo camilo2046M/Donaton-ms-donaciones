@@ -37,6 +37,27 @@ public class DonacionServiceTest {
 
         assertNotNull(resultado);
         assertEquals(nombre, resultado.getDonanteNombre());
-        verify(repository, times(1)).save(any(Donacion.class)); // Verifica que se llamó al repo
+        verify(repository, times(1)).save(any(Donacion.class));
+    }
+
+    @Test
+    void cuandoRegistrarDonacionEmpresarial_entoncesRetornaDonacionConRut() {
+        String tipo = "EMPRESARIAL";
+        Double monto = 5000.0;
+        String nombre = "Empresa Tech";
+        String objeto = "Computadores";
+        String rut = "99.888.777-6";
+        String certificado = "CERT-2026";
+
+        com.gestionDonaton.gestion_donaciones.model.DonacionEmpresarial mockDonacion = new com.gestionDonaton.gestion_donaciones.model.DonacionEmpresarial();
+        mockDonacion.setDonanteNombre(nombre);
+        mockDonacion.setRutEmpresa(rut);
+
+        when(repository.save(any(com.gestionDonaton.gestion_donaciones.model.Donacion.class))).thenReturn(mockDonacion);
+
+        com.gestionDonaton.gestion_donaciones.model.Donacion resultado = service.registrarDonacion(tipo, monto, nombre, objeto, rut, certificado);
+        assertNotNull(resultado, "El resultado no debería ser nulo");
+        assertTrue(resultado instanceof com.gestionDonaton.gestion_donaciones.model.DonacionEmpresarial);
+        assertEquals(rut, ((com.gestionDonaton.gestion_donaciones.model.DonacionEmpresarial) resultado).getRutEmpresa());
     }
 }
