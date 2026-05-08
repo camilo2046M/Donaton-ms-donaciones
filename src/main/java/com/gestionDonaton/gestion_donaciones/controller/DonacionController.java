@@ -26,19 +26,22 @@ public class DonacionController {
             @RequestParam(required = false) String rut,
             @RequestParam(required = false) String certificado) {
 
-
         Donacion nuevaDonacion = service.registrarDonacion(tipo, monto, nombre, objeto, rut, certificado);
-
         return new ResponseEntity<>(nuevaDonacion, HttpStatus.CREATED);
     }
 
 
+    @GetMapping("/buscar/{palabra}")
+    public List<Donacion> buscarPorPalabra(@PathVariable String palabra) {
+        return service.buscarPorPalabra(palabra);
+    }
+
+    // Listado total
     @GetMapping("/listar")
     public ResponseEntity<List<Donacion>> obtenerTodas() {
         List<Donacion> donaciones = service.listarTodas();
         return ResponseEntity.ok(donaciones);
     }
-
 
     @GetMapping("/salud")
     public String check() {
