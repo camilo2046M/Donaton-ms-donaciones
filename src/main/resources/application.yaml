@@ -1,3 +1,31 @@
+server:
+
+  port: 8081
+
 spring:
   application:
-    name: gestion-donaciones
+    name: donaton-ms-donaciones
+
+  datasource:
+
+    url: jdbc:postgresql://localhost:5432/bd_donaciones
+    username: postgres #el usuario con la que opera la base de datos
+    password: tu_password_aqui #contraseña de la base de datos
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+        format_sql: true
+
+
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
