@@ -32,25 +32,25 @@ public class DonacionController {
 
     @PatchMapping("/{id}/completar")
     public ResponseEntity<String> marcarComoCompletada(@PathVariable Long id) {
-        System.out.println("Donación " + id + " marcada como COMPLETADA");
-        return ResponseEntity.ok("Estado de donación actualizado");
-    }
+        // Llamamos al servicio para que haga el trabajo sucio
+        boolean actualizado = service.actualizarEstadoCompletado(id);
 
+        if (actualizado) {
+            System.out.println("LOG: Donación " + id + " marcada como COMPLETADA exitosamente.");
+            return ResponseEntity.ok("Estado de donación " + id + " actualizado a COMPLETADA");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("No se encontró la donación con ID: " + id);
+        }
+    }
 
     @GetMapping("/buscar/{palabra}")
     public List<Donacion> buscarPorPalabra(@PathVariable String palabra) {
         return service.buscarPorPalabra(palabra);
     }
 
-    // Listado total
     @GetMapping("/listar")
     public ResponseEntity<List<Donacion>> obtenerTodas() {
-        List<Donacion> donaciones = service.listarTodas();
-        return ResponseEntity.ok(donaciones);
-    }
-
-    @GetMapping("/salud")
-    public String check() {
-        return "Microservicio de Donaciones Operativo - Puerto 8081";
+        return ResponseEntity.ok(service.listarTodas());
     }
 }

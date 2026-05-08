@@ -15,4 +15,5 @@ public abstract class Donacion {
     private Double monto;
     private String donanteNombre;
     private String nombreObjeto;
+    private String estado;
 }
