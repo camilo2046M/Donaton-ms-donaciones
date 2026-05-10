@@ -7,5 +7,5 @@ import java.util.List;
 
 @Repository
 public interface DonacionRepository extends JpaRepository<Donacion, Long> {
-    List<Donacion> findByNombreObjetoContainingIgnoreCase(String palabra);
+    List<Donacion> findByNombreObjetoContainingIgnoreCase(String nombreObjeto);
 }

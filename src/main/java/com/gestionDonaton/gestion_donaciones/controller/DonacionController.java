@@ -16,7 +16,6 @@ public class DonacionController {
     @Autowired
     private DonacionService service;
 
-
     @PostMapping("/crear")
     public ResponseEntity<Donacion> crearDonacion(
             @RequestParam String tipo,
@@ -32,21 +31,20 @@ public class DonacionController {
 
     @PatchMapping("/{id}/completar")
     public ResponseEntity<String> marcarComoCompletada(@PathVariable Long id) {
-        // Llamamos al servicio para que haga el trabajo sucio
         boolean actualizado = service.actualizarEstadoCompletado(id);
 
         if (actualizado) {
-            System.out.println("LOG: Donación " + id + " marcada como COMPLETADA exitosamente.");
-            return ResponseEntity.ok("Estado de donación " + id + " actualizado a COMPLETADA");
+            return ResponseEntity.ok("Donación " + id + " COMPLETADA");
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("No se encontró la donación con ID: " + id);
+                    .body("ID no encontrado");
         }
     }
 
     @GetMapping("/buscar/{palabra}")
-    public List<Donacion> buscarPorPalabra(@PathVariable String palabra) {
-        return service.buscarPorPalabra(palabra);
+    public ResponseEntity<List<Donacion>> buscarPorPalabra(@PathVariable String palabra) {
+        List<Donacion> resultados = service.buscarPorPalabra(palabra);
+        return ResponseEntity.ok(resultados);
     }
 
     @GetMapping("/listar")
