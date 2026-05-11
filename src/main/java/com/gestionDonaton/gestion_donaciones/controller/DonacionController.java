@@ -1,6 +1,7 @@
 package com.gestionDonaton.gestion_donaciones.controller;
 
-import com.gestionDonaton.gestion_donaciones.model.Donacion;
+import com.gestionDonaton.gestion_donaciones.dto.DonacionRequestDTO;
+import com.gestionDonaton.gestion_donaciones.dto.DonacionResponseDTO;
 import com.gestionDonaton.gestion_donaciones.service.DonacionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,45 +11,50 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/donaciones")
+@RequestMapping("/api/v1/donaciones")
 public class DonacionController {
 
     @Autowired
     private DonacionService service;
 
-    @PostMapping("/crear")
-    public ResponseEntity<Donacion> crearDonacion(
-            @RequestParam String tipo,
-            @RequestParam Double monto,
-            @RequestParam String nombre,
-            @RequestParam String objeto,
-            @RequestParam(required = false) String rut,
-            @RequestParam(required = false) String certificado) {
-
-        Donacion nuevaDonacion = service.registrarDonacion(tipo, monto, nombre, objeto, rut, certificado);
-        return new ResponseEntity<>(nuevaDonacion, HttpStatus.CREATED);
+    /**
+     * POST /api/v1/donaciones
+     * Body JSON: { tipo, monto, nombre, objeto, rut?, certificado? }
+     */
+    @PostMapping
+    public ResponseEntity<DonacionResponseDTO> crearDonacion(
+            @RequestBody DonacionRequestDTO request) {
+        DonacionResponseDTO response = service.registrarDonacion(request);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    @PatchMapping("/{id}/completar")
-    public ResponseEntity<String> marcarComoCompletada(@PathVariable Long id) {
-        boolean actualizado = service.actualizarEstadoCompletado(id);
-
-        if (actualizado) {
-            return ResponseEntity.ok("Donación " + id + " COMPLETADA");
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("ID no encontrado");
-        }
-    }
-
-    @GetMapping("/buscar/{palabra}")
-    public ResponseEntity<List<Donacion>> buscarPorPalabra(@PathVariable String palabra) {
-        List<Donacion> resultados = service.buscarPorPalabra(palabra);
-        return ResponseEntity.ok(resultados);
-    }
-
-    @GetMapping("/listar")
-    public ResponseEntity<List<Donacion>> obtenerTodas() {
+    /**
+     * GET /api/v1/donaciones
+     */
+    @GetMapping
+    public ResponseEntity<List<DonacionResponseDTO>> listarTodas() {
         return ResponseEntity.ok(service.listarTodas());
+    }
+
+    /**
+     * GET /api/v1/donaciones/buscar/{palabra}
+     */
+    @GetMapping("/buscar/{palabra}")
+    public ResponseEntity<List<DonacionResponseDTO>> buscarPorPalabra(
+            @PathVariable String palabra) {
+        return ResponseEntity.ok(service.buscarPorPalabra(palabra));
+    }
+
+    /**
+     * PATCH /api/v1/donaciones/{id}/completar
+     */
+    @PatchMapping("/{id}/completar")
+    public ResponseEntity<?> completar(@PathVariable Long id) {
+        DonacionResponseDTO result = service.actualizarEstadoCompletado(id);
+        if (result != null) {
+            return ResponseEntity.ok(result);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body("Donación con ID " + id + " no encontrada.");
     }
 }
