@@ -1,4 +1,3 @@
-
 package com.gestionDonaton.gestion_donaciones.model;
 
 import jakarta.persistence.DiscriminatorValue;
@@ -12,9 +11,8 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class DonacionIndividual extends Donacion {
 
-
-
     public DonacionIndividual() {
         super();
+
     }
 }
