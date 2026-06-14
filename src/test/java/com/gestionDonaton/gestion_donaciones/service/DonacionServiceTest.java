@@ -1,7 +1,10 @@
 package com.gestionDonaton.gestion_donaciones.service;
 
+import com.gestionDonaton.gestion_donaciones.dto.DonacionRequestDTO;
+import com.gestionDonaton.gestion_donaciones.dto.DonacionResponseDTO;
 import com.gestionDonaton.gestion_donaciones.model.Donacion;
 import com.gestionDonaton.gestion_donaciones.model.DonacionIndividual;
+import com.gestionDonaton.gestion_donaciones.model.DonacionEmpresarial;
 import com.gestionDonaton.gestion_donaciones.repository.DonacionRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,40 +27,53 @@ public class DonacionServiceTest {
 
     @Test
     void cuandoRegistrarDonacionIndividual_entoncesRetornaDonacion() {
-        String tipo = "INDIVIDUAL";
-        Double monto = 100.0;
-        String nombre = "Juan Perez";
-        String objeto = "Mantas";
+        // CORREGIDO: Constructor vacío + Setters para evitar el error del Builder
+        DonacionRequestDTO requestDto = new DonacionRequestDTO();
+        requestDto.setTipo("INDIVIDUAL");
+        requestDto.setMonto(100.0);
+        requestDto.setNombre("Juan Perez");
+        requestDto.setObjeto("Mantas");
 
-        DonacionIndividual mockDonacion = new DonacionIndividual();
-        mockDonacion.setDonanteNombre(nombre);
+        // Comportamiento del modelo interno (Entidad)
+        DonacionIndividual mockDonacionEntidad = new DonacionIndividual();
+        mockDonacionEntidad.setDonanteNombre("Juan Perez");
 
-        when(repository.save(any(Donacion.class))).thenReturn(mockDonacion);
-        Donacion resultado = service.registrarDonacion(tipo, monto, nombre, objeto, null, null);
+        when(repository.save(any(Donacion.class))).thenReturn(mockDonacionEntidad);
 
+        // Invocación del servicio con el DTO
+        DonacionResponseDTO resultado = service.registrarDonacion(requestDto);
+
+        // Verificaciones
         assertNotNull(resultado);
-        assertEquals(nombre, resultado.getDonanteNombre());
+        assertEquals("Juan Perez", resultado.getDonanteNombre());
         verify(repository, times(1)).save(any(Donacion.class));
     }
 
     @Test
     void cuandoRegistrarDonacionEmpresarial_entoncesRetornaDonacionConRut() {
-        String tipo = "EMPRESARIAL";
-        Double monto = 5000.0;
-        String nombre = "Empresa Tech";
-        String objeto = "Computadores";
-        String rut = "99.888.777-6";
-        String certificado = "CERT-2026";
+        // CORREGIDO: Constructor vacío + Setters para evitar el error del Builder
+        DonacionRequestDTO requestDto = new DonacionRequestDTO();
+        requestDto.setTipo("EMPRESARIAL");
+        requestDto.setMonto(5000.0);
+        requestDto.setNombre("Empresa Tech");
+        requestDto.setObjeto("Computadores");
+        requestDto.setRut("99.888.777-6");
+        requestDto.setCertificado("CERT-2026");
 
-        com.gestionDonaton.gestion_donaciones.model.DonacionEmpresarial mockDonacion = new com.gestionDonaton.gestion_donaciones.model.DonacionEmpresarial();
-        mockDonacion.setDonanteNombre(nombre);
-        mockDonacion.setRutEmpresa(rut);
+        // El repositorio sigue interactuando con las entidades mapeadas de BD
+        DonacionEmpresarial mockDonacionEntidad = new DonacionEmpresarial();
+        mockDonacionEntidad.setDonanteNombre("Empresa Tech");
+        mockDonacionEntidad.setRutEmpresa("99.888.777-6");
 
-        when(repository.save(any(com.gestionDonaton.gestion_donaciones.model.Donacion.class))).thenReturn(mockDonacion);
+        when(repository.save(any(Donacion.class))).thenReturn(mockDonacionEntidad);
 
-        com.gestionDonaton.gestion_donaciones.model.Donacion resultado = service.registrarDonacion(tipo, monto, nombre, objeto, rut, certificado);
+        // Llamada adaptada a la firma del servicio
+        DonacionResponseDTO resultado = service.registrarDonacion(requestDto);
+
+        // Verificaciones
         assertNotNull(resultado, "El resultado no debería ser nulo");
-        assertTrue(resultado instanceof com.gestionDonaton.gestion_donaciones.model.DonacionEmpresarial);
-        assertEquals(rut, ((com.gestionDonaton.gestion_donaciones.model.DonacionEmpresarial) resultado).getRutEmpresa());
+        assertEquals("99.888.777-6", resultado.getRutEmpresa());
+        assertEquals("Empresa Tech", resultado.getDonanteNombre());
+        verify(repository, times(1)).save(any(Donacion.class));
     }
 }
