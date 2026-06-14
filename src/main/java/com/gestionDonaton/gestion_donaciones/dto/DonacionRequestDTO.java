@@ -2,10 +2,7 @@ package com.gestionDonaton.gestion_donaciones.dto;
 
 import lombok.Data;
 
-/**
- * DTO para recibir el body del POST /api/donaciones/crear
- * El frontend envía este JSON desde el formulario de donación.
- */
+
 @Data
 public class DonacionRequestDTO {
     private String tipo;            // "INDIVIDUAL" o "EMPRESARIAL"
