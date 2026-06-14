@@ -12,9 +12,10 @@ public abstract class Donacion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(name = "monto", nullable = true, unique = false)
     private Double monto;
     private String donanteNombre;
     private String nombreObjeto;
-    private String estado;
+    private String estado = "PENDIENTE";
 
 }
