@@ -8,7 +8,7 @@ spring:
 
   datasource:
 
-    url: jdbc:postgresql://localhost:5432/bd_donaciones
+    url: jdbc:postgresql://localhost:5432/donacionesdb
     username: postgres
     password: 12345
     driver-class-name: org.postgresql.Driver

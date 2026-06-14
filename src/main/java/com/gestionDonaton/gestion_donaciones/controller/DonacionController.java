@@ -1,6 +1,7 @@
 package com.gestionDonaton.gestion_donaciones.controller;
 
-import com.gestionDonaton.gestion_donaciones.model.Donacion;
+import com.gestionDonaton.gestion_donaciones.dto.DonacionRequestDTO;
+import com.gestionDonaton.gestion_donaciones.dto.DonacionResponseDTO;
 import com.gestionDonaton.gestion_donaciones.service.DonacionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -15,12 +16,15 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+
 @RequestMapping("/api/donaciones")
 @Tag(name = "Gestión de Donaciones", description = "Endpoints para el registro, actualización y consulta de donaciones")
+@RequestMapping("/api/v1/donaciones")
 public class DonacionController {
 
     @Autowired
     private DonacionService service;
+
 
     @PostMapping("/crear")
     @Operation(
@@ -74,28 +78,37 @@ public class DonacionController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("ID no encontrado");
         }
+
+   
+    @PostMapping
+    public ResponseEntity<DonacionResponseDTO> crearDonacion(
+            @RequestBody DonacionRequestDTO request) {
+        DonacionResponseDTO response = service.registrarDonacion(request);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    @GetMapping("/buscar/{palabra}")
-    @Operation(
-            summary = "Buscar donaciones por palabra clave",
-            description = "Retorna una lista de donaciones que coincidan con el término de búsqueda en sus campos de texto."
-    )
-    @ApiResponse(responseCode = "200", description = "Búsqueda procesada (puede retornar una lista vacía)")
-    public ResponseEntity<List<Donacion>> buscarPorPalabra(
-            @Parameter(description = "Palabra o término clave para filtrar las donaciones", required = true)
-            @PathVariable String palabra) {
-        List<Donacion> resultados = service.buscarPorPalabra(palabra);
-        return ResponseEntity.ok(resultados);
-    }
-
-    @GetMapping("/listar")
-    @Operation(
-            summary = "Obtener todas las donaciones",
-            description = "Recupera un listado completo de todas las donaciones registradas en la base de datos."
-    )
-    @ApiResponse(responseCode = "200", description = "Listado recuperado exitosamente")
-    public ResponseEntity<List<Donacion>> obtenerTodas() {
+  
+    @GetMapping
+    public ResponseEntity<List<DonacionResponseDTO>> listarTodas() {
         return ResponseEntity.ok(service.listarTodas());
+
+    }
+
+ 
+    @GetMapping("/buscar/{palabra}")
+    public ResponseEntity<List<DonacionResponseDTO>> buscarPorPalabra(
+            @PathVariable String palabra) {
+        return ResponseEntity.ok(service.buscarPorPalabra(palabra));
+    }
+
+   
+    @PatchMapping("/{id}/completar")
+    public ResponseEntity<?> completar(@PathVariable Long id) {
+        DonacionResponseDTO result = service.actualizarEstadoCompletado(id);
+        if (result != null) {
+            return ResponseEntity.ok(result);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body("Donación con ID " + id + " no encontrada.");
     }
 }
