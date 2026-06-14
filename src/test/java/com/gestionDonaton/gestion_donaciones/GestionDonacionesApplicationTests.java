@@ -20,7 +20,6 @@ class GestionDonacionesApplicationTests {
 
 	@Test
 	void contextLoads() {
-		// Este test pasará con éxito si el contexto de Spring Boot se levanta completo.
-		// Valida que tus @EntityScan y @EnableJpaRepositories no tengan errores de configuración.
+
 	}
 }
