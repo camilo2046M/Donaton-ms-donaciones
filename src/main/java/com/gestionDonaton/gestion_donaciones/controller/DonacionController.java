@@ -2,6 +2,11 @@ package com.gestionDonaton.gestion_donaciones.controller;
 
 import com.gestionDonaton.gestion_donaciones.model.Donacion;
 import com.gestionDonaton.gestion_donaciones.service.DonacionService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,18 +16,38 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/donaciones")
+@Tag(name = "Gestión de Donaciones", description = "Endpoints para el registro, actualización y consulta de donaciones")
 public class DonacionController {
 
     @Autowired
     private DonacionService service;
 
     @PostMapping("/crear")
+    @Operation(
+            summary = "Registrar una nueva donación",
+            description = "Crea un registro de donación en el sistema. Soporta tanto donaciones monetarias como de objetos físicos."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Donación registrada exitosamente"),
+            @ApiResponse(responseCode = "400", description = "Parámetros de solicitud inválidos")
+    })
     public ResponseEntity<Donacion> crearDonacion(
+            @Parameter(description = "Tipo de donación (ej. Moneda, Alimento, Ropa)", required = true)
             @RequestParam String tipo,
+
+            @Parameter(description = "Monto de la donación (0 si es un objeto físico)", required = true)
             @RequestParam Double monto,
+
+            @Parameter(description = "Nombre del donante", required = true)
             @RequestParam String nombre,
+
+            @Parameter(description = "Descripción del objeto donado (en caso de aplicar)", required = true)
             @RequestParam String objeto,
+
+            @Parameter(description = "RUT del donante (opcional para extranjeros o anónimos)", required = false)
             @RequestParam(required = false) String rut,
+
+            @Parameter(description = "Indica si requiere certificado de donación (opcional)", required = false)
             @RequestParam(required = false) String certificado) {
 
         Donacion nuevaDonacion = service.registrarDonacion(tipo, monto, nombre, objeto, rut, certificado);
@@ -30,7 +55,17 @@ public class DonacionController {
     }
 
     @PatchMapping("/{id}/completar")
-    public ResponseEntity<String> marcarComoCompletada(@PathVariable Long id) {
+    @Operation(
+            summary = "Marcar donación como completada",
+            description = "Cambia el estado de una donación específica a 'COMPLETADA' utilizando su ID."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Estado actualizado correctamente"),
+            @ApiResponse(responseCode = "404", description = "No se encontró ninguna donación con el ID proporcionado")
+    })
+    public ResponseEntity<String> marcarComoCompletada(
+            @Parameter(description = "ID único de la donación a actualizar", required = true)
+            @PathVariable Long id) {
         boolean actualizado = service.actualizarEstadoCompletado(id);
 
         if (actualizado) {
@@ -42,12 +77,24 @@ public class DonacionController {
     }
 
     @GetMapping("/buscar/{palabra}")
-    public ResponseEntity<List<Donacion>> buscarPorPalabra(@PathVariable String palabra) {
+    @Operation(
+            summary = "Buscar donaciones por palabra clave",
+            description = "Retorna una lista de donaciones que coincidan con el término de búsqueda en sus campos de texto."
+    )
+    @ApiResponse(responseCode = "200", description = "Búsqueda procesada (puede retornar una lista vacía)")
+    public ResponseEntity<List<Donacion>> buscarPorPalabra(
+            @Parameter(description = "Palabra o término clave para filtrar las donaciones", required = true)
+            @PathVariable String palabra) {
         List<Donacion> resultados = service.buscarPorPalabra(palabra);
         return ResponseEntity.ok(resultados);
     }
 
     @GetMapping("/listar")
+    @Operation(
+            summary = "Obtener todas las donaciones",
+            description = "Recupera un listado completo de todas las donaciones registradas en la base de datos."
+    )
+    @ApiResponse(responseCode = "200", description = "Listado recuperado exitosamente")
     public ResponseEntity<List<Donacion>> obtenerTodas() {
         return ResponseEntity.ok(service.listarTodas());
     }
