@@ -10,7 +10,7 @@ spring:
 
     url: jdbc:postgresql://localhost:5432/bd_donaciones
     username: postgres
-    password: 12345
+    password: hola1234
     driver-class-name: org.postgresql.Driver
 
   jpa:
