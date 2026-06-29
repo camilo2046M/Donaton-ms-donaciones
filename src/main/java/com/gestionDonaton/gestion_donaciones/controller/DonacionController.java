@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
         import java.util.List;
 
 @RestController
-@RequestMapping("/api/donaciones")
+@RequestMapping("/api/v1/donaciones")
 @Tag(name = "Gestión de Donaciones", description = "Endpoints para el registro, actualización y consulta de donaciones")
 public class DonacionController {
 
@@ -25,10 +25,15 @@ public class DonacionController {
     // 1. ENDPOINT: POST /api/donaciones/crear
     // ==========================================
     @PostMapping("/crear")
-    @Operation(
-            summary = "Registrar una nueva donación",
-            description = "Crea un registro de donación en el sistema. Soporta tanto donaciones monetarias como de objetos físicos."
-    )
+    @Operation(summary = "Registrar una nueva donación")
+    public ResponseEntity<DonacionResponseDTO> crearDonacion(
+            @RequestBody com.gestionDonaton.gestion_donaciones.dto.DonacionRequestDTO requestDto) {
+
+
+
+        DonacionResponseDTO nuevaDonacion = service.registrarDonacion(requestDto);
+        return new ResponseEntity<>(nuevaDonacion, HttpStatus.CREATED);
+    }
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Donación registrada exitosamente"),
             @ApiResponse(responseCode = "400", description = "Parámetros de solicitud inválidos")
